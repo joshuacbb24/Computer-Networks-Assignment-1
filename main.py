@@ -59,11 +59,16 @@ def receiveOnePing(mySocket, ID, timeout, destAddr):
         #Fetch the ICMP header from the IP packet
 
 
+        # just extract the first byte from the received IP packet (the IHL can be found in the last 4 bits of the first byte)
         firstByte = recPacket[:1]
 
+        # convert the first byte into an int
+        # (it starts off as pure bytes in big endian format since IP uses big endian)
         firstByteInt = int.from_bytes(firstByte, "big")
 
-        # right bitwise shift cuts off the last 4 bits and only leaves the first 4 bits (giving the version from IP header)
+
+        # right bitwise shift cuts off the last 4 bits and only leaves the first 4 bits
+        # (giving the version from IP header, going to be 4 in this case)
         ipVersion = firstByteInt >> 4
 
         # get the last 4 bits of the first byte (E.G. in  the IP header this is the IHL)
@@ -77,8 +82,35 @@ def receiveOnePing(mySocket, ID, timeout, destAddr):
         # total number of bytes in the IP header
         IHL /= 8
 
+        # convert back to an int
+        # for some reason it is converting to a float even though it is dividing an int by an int, so convert back
+        IHL = int(IHL)
 
-        
+
+        # extract the bytes that make up the ICMP portion of the received packet
+        # (E.G. where the data starts in the IP packet)
+        icmpPacket = recPacket[IHL:]
+
+
+        type = icmpPacket[:1]
+        type = int.from_bytes(type, "big")
+
+        code = icmpPacket[1:2]
+        code = int.from_bytes(code, "big")
+
+        Checksum = icmpPacket[2:4]
+        Checksum = int.from_bytes(Checksum, "big")
+
+
+        identifier = icmpPacket[4:6]
+        identifier = int.from_bytes(identifier, "big")
+
+        seqNum = icmpPacket[6:8]
+        seqNum = int.from_bytes(seqNum, "big")
+
+
+
+
 
 
 
