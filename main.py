@@ -7,6 +7,17 @@ import select
 import binascii
 ICMP_ECHO_REQUEST = 8
 
+
+def main():
+
+    if len(sys.argv) > 1:
+        host = sys.argv[1]
+    else:
+        host = "127.0.0.1"
+
+    ping(host)
+
+
 def checksum(string):
     csum = 0
     countTo = (len(string) // 2) * 2
@@ -21,7 +32,6 @@ def checksum(string):
     if countTo < len(string):
         csum = csum + ord(string[len(string) - 1])
         csum = csum & 0xffffffff
-
 
     csum = (csum >> 16) + (csum & 0xffff)
     csum = csum + (csum >> 16)
@@ -48,6 +58,37 @@ def receiveOnePing(mySocket, ID, timeout, destAddr):
         #Fill in start
         #Fetch the ICMP header from the IP packet
 
+
+        firstByte = recPacket[:1]
+
+        firstByteInt = int.from_bytes(firstByte, "big")
+
+        # right bitwise shift cuts off the last 4 bits and only leaves the first 4 bits (giving the version from IP header)
+        ipVersion = firstByteInt >> 4
+
+        # get the last 4 bits of the first byte (E.G. in  the IP header this is the IHL)
+        # The IHL is the number of 32 bit words in the IP header which represents the start of the data
+        # bitwise and with 00001111 makes first 4 bits 0, and last 4 bits stay the same (leaving last 4 bits only)
+        IHL = firstByteInt & 0b00001111
+
+        # total number of bits in the IP header (number of 32 bit words * 32 = total bits)
+        IHL *= 32
+
+        # total number of bytes in the IP header
+        IHL /= 8
+
+
+        
+
+
+
+        print(firstByte.hex())
+        print(firstByte)
+
+
+        sys.exit()
+
+        return 0
 
 
         #Fill in end
@@ -79,6 +120,7 @@ def sendOnePing(mySocket, destAddr, ID):
     # which can be referenced by their position number within the object.
 
 
+
 def doOnePing(destAddr, timeout):
     icmp = getprotobyname("icmp")
     # SOCK_RAW is a powerful socket type. For more details:http://sock-raw.org/papers/sock_raw
@@ -103,3 +145,7 @@ def ping(host, timeout=1):
         print(delay)
         time.sleep(1)# one second
     return delay
+
+
+
+main()
