@@ -92,7 +92,7 @@ def receiveOnePing(mySocket, ID, timeout, destAddr):
         icmpPacket = recPacket[IHL:]
 
 
-        type = icmpPacket[:1]
+        type = icmpPacket[0:1]
         type = int.from_bytes(type, "big")
 
         code = icmpPacket[1:2]
@@ -110,6 +110,7 @@ def receiveOnePing(mySocket, ID, timeout, destAddr):
 
 
 
+        data = icmpPacket[8:]
 
 
 
