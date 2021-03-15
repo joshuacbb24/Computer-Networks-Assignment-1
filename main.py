@@ -168,7 +168,7 @@ def sendOnePing(mySocket, destAddr, ID):
     myChecksum = 0
     # Make a dummy header with a 0 checksum
     # struct -- Interpret strings as packed binary data
-    header = struct.pack("bbHHh", ICMP_ECHO_REQUEST, 0, myChecksum, ID, ID)
+    header = struct.pack("!bbHHh", ICMP_ECHO_REQUEST, 0, myChecksum, ID, ID)
 
     data = struct.pack("!d", time.time())
     # Calculate the checksum on the data and the dummy header.
@@ -176,11 +176,11 @@ def sendOnePing(mySocket, destAddr, ID):
     # Get the right checksum, and put in the header
 
 
-    if sys.platform == 'darwin':
-        # Convert 16-bit integers from host to network byte order
-        myChecksum = htons(myChecksum) & 0xffff
-    else:
-        myChecksum = htons(myChecksum)
+    # if sys.platform == 'darwin':
+    #     # Convert 16-bit integers from host to network byte order
+    #     myChecksum = htons(myChecksum) & 0xffff
+    # else:
+    #     myChecksum = htons(myChecksum)
 
     header = struct.pack("!bbHHh", ICMP_ECHO_REQUEST, 0, myChecksum, ID, ID)
 
@@ -223,6 +223,11 @@ def ping(host, timeout = 1):
     try:
         while True:
             delay = doOnePing(dest, timeout)
+
+            if type(delay) is int or type(delay) is float:
+                print("{} seconds to receive a response".format(delay))
+            elif type(delay) is str:
+                print(delay)
 
             if count != 0:
                 print("Packet Loss ", 100 * failed / count, "%\n")
