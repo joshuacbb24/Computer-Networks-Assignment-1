@@ -135,6 +135,8 @@ def receiveOnePing(mySocket, ID, timeout, destAddr):
         code = icmpPacket[1:2]
         code = int.from_bytes(code, "big")
 
+        switch(code)
+
         Checksum = icmpPacket[2:4]
         Checksum = int.from_bytes(Checksum, "big")
 
@@ -225,7 +227,6 @@ def ping(host, timeout = 1):
     try:
         while True:
             delay = doOnePing(dest, timeout)
-            switch(type)
 
             if count != 0:
                 print("Packet Loss ", 100 * failed / count, "%\n")
