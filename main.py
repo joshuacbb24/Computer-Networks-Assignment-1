@@ -222,11 +222,9 @@ def ping(host, timeout = 1):
     print("")
     # Send 10 ping requests to a server separated by approximately one second
     try:
-        for i in range(10):
+        while True:
             delay = doOnePing(dest, timeout)
-            print(delay)
             switch(type)
-            print("Min RTT ", str(rMin*1000), "ms.   Max RTT ", str(rMax*1000), "ms.   Avg RTT ", str(rAvg*1000), "ms")
 
             if count != 0:
                 print("Packet Loss ", 100 * failed / count, "%\n")
