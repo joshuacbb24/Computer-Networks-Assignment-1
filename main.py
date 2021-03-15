@@ -148,7 +148,7 @@ def receiveOnePing(mySocket, ID, timeout, destAddr):
         data = icmpPacket[8:]
 
         bytesInDouble = struct.calcsize("d")
-        timeSent = struct.unpack("d", recPacket[28:28 + bytesInDouble])[0]
+        timeSent = struct.unpack("!d", recPacket[28:28 + bytesInDouble])[0]
 
         rTrip = timeReceived - timeSent
         rMin = min(rMin, rTrip)
@@ -225,7 +225,7 @@ def ping(host, timeout = 1):
             delay = doOnePing(dest, timeout)
 
             if type(delay) is int or type(delay) is float:
-                print("{} seconds to receive a response".format(delay))
+                print("{} ms to receive a response".format(delay * 1000))
             elif type(delay) is str:
                 print(delay)
 
