@@ -21,6 +21,31 @@ def main():
     ping(host)
 
 
+
+def switch(argument):
+    switch = {
+        0: "\tNet Unreachable",
+        1: "\tHost Unreachable",
+        2: "\tProtocol Unreachable",
+        3: "\tPort Unreachable",
+        4: "\tFragmentation Needed and Don't Fragment was Set",
+        5: "\tSource Route Failed",
+        6: "\tDestination Network Unknown",
+        7: "\tDestination Host Unknown",
+        8: "\tSource Host Isolated",
+        9: "\tCommunication with Destination Network is Administratively Prohibited",
+        10: "\tCommunication with Destination Host is Administratively Prohibited",
+        11: "\tDestination Network Unreachable for Type of Service",
+        12: "\tDestination Host Unreachable for Type of Service",
+        13: "\tCommunication Administratively Prohibited",
+        14: "\tHost Precedence Violation",
+        15: "\tPrecedence Cutoff in effect"
+    }
+    print(switch.get(argument, "\tNo Error"))
+
+
+
+
 def checksum(string):
     csum = 0
     countTo = (len(string) // 2) * 2
@@ -196,15 +221,23 @@ def ping(host, timeout = 1):
     print("Pinging " + dest + " using Python:")
     print("")
     # Send 10 ping requests to a server separated by approximately one second
-    for i in range(10):
-        delay = doOnePing(dest, timeout)
-        print(delay)
-        print("Min RTT ", str(rMin*1000), "ms.   Max RTT ", str(rMax*1000), "ms.   Avg RTT ", str(rAvg*1000), "ms")
+    try:
+        for i in range(10):
+            delay = doOnePing(dest, timeout)
+            print(delay)
+            switch(type)
+            print("Min RTT ", str(rMin*1000), "ms.   Max RTT ", str(rMax*1000), "ms.   Avg RTT ", str(rAvg*1000), "ms")
 
+            if count != 0:
+                print("Packet Loss ", 100 * failed / count, "%\n")
+
+            time.sleep(1)  # one second
+
+    except KeyboardInterrupt:
+        print("Min RTT ", rMin * 1000, " Max RTT ", rMax * 1000, " Avg RTT ", rAvg * 1000)
         if count != 0:
-            print("Packet Loss ", 100 * failed / count, "%\n")
+            print("Packet Loss ", 100 * failed / count, "%")
 
-        time.sleep(1)  # one second
     return delay
 
 
