@@ -178,14 +178,14 @@ def ping(host, timeout=1):
     dest = gethostbyname(host)
     print("Pinging " + dest + " using Python:")
     print("")
-    # Send ping requests to a server separated by approximately one second
-    while 1 :
+    # Send 10 ping requests to a server separated by approximately one second
+    for i in range(10):
         delay = doOnePing(dest, timeout)
-        print (delay)
-        print ("Min RTT ", rMin, " Max RTT ", rMax, " Avg RTT ", rAvg)
+        print(delay)
+        print("Min RTT ", rMin, " Max RTT ", rMax, " Avg RTT ", rAvg)
 
         if count != 0:
-            print ("Packet Loss ", 100 * failed / count, "%")
+            print("Packet Loss ", 100 * failed / count, "%\n")
 
         time.sleep(1)# one second
     return delay

@@ -8,6 +8,8 @@ import random
 ICMP_ECHO_REQUEST = 8
 
 
+
+
 # can pass in the address you want as the first argument when running the script
 def main():
 
@@ -48,17 +50,18 @@ def checksum(string):
 
 
 def receiveOnePing(mySocket, ID, timeout, destAddr):
+    global rTrip, rMin, rMax, rSum, count, rAvg, failed
 
     timeLeft = timeout
 
     while 1:
         startedSelect = time.time()
         whatReady = select.select([mySocket], [], [], timeLeft)
-        x = time.time()
         howLongInSelect = (time.time() - startedSelect)
 
 
         if whatReady[0] == []: # Timeout
+            failed = failed + 1
             return "Request timed out."
 
         timeReceived = time.time()
@@ -120,15 +123,20 @@ def receiveOnePing(mySocket, ID, timeout, destAddr):
 
         data = icmpPacket[8:]
 
+        bytesInDouble = struct.calcsize("d")
+        timeSent = struct.unpack("d", recPacket[28:28 + bytesInDouble])[0]
+
+        rTrip = timeReceived - timeSent
+        rMin = min(rMin, rTrip)
+        rMax = max(rMax, rTrip)
+        rSum = rTrip + rSum
+        count = count + 1
+        rAvg = rSum / count
+        return rTrip
 
 
-        #Fill in end
-        timeLeft = timeLeft - howLongInSelect
-        if timeLeft <= 0:
-            return "Request timed out."
-        else:
-            time.sleep(1)
-            return timeLeft
+
+
 
 
 def sendOnePing(mySocket, destAddr, ID):
@@ -144,7 +152,7 @@ def sendOnePing(mySocket, destAddr, ID):
     # Get the right checksum, and put in the header
 
 
-    if sys.platform == 'linux':
+    if sys.platform == 'darwin':
         # Convert 16-bit integers from host to network byte order
         myChecksum = htons(myChecksum) & 0xffff
     else:
@@ -174,16 +182,29 @@ def doOnePing(destAddr, timeout):
 
 
 def ping(host, timeout = 1):
+    global rTrip, rMin, rMax, rSum, count, rAvg, failed
+    rTrip = 0
+    failed = 0
+    rMin = float('+inf')
+    rMax = float('-inf')
+    rSum = 0
+    count = 0
+    rAvg = 0.0
     # timeout=1 means: If one second goes by without a reply from the server,
     # the client assumes that either the client's ping or the server's pong is lost
     dest = gethostbyname(host)
     print("Pinging " + dest + " using Python:")
     print("")
-    # Send ping requests to a server separated by approximately one second
-    while 1 :
+    # Send 10 ping requests to a server separated by approximately one second
+    for i in range(10):
         delay = doOnePing(dest, timeout)
         print(delay)
-        time.sleep(1)# one second
+        print("Min RTT ", str(rMin*1000), "ms.   Max RTT ", str(rMax*1000), "ms.   Avg RTT ", str(rAvg*1000), "ms")
+
+        if count != 0:
+            print("Packet Loss ", 100 * failed / count, "%\n")
+
+        time.sleep(1)  # one second
     return delay
 
 
