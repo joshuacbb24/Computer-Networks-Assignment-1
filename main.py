@@ -86,7 +86,8 @@ def receiveOnePing(mySocket, ID, timeout, destAddr):
 
 
         if whatReady[0] == []: # Timeout
-            failed = failed + 1
+            count += 1
+            failed += 1
             return "Request timed out."
 
         timeReceived = time.time()
