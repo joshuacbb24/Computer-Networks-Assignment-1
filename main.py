@@ -42,27 +42,6 @@ def checksum(string):
 
 
 
-def check_checksum(data : bytes):
-
-    # contains each of the 16 bit words from the data passed in
-    words = list()
-
-
-    # keeps track of the current word being extracted from the bytes
-    curWordCount  = 0
-
-
-    # run once for every 16 bit word in the bytes
-    for i in range(int(len(data) / 2)):
-
-        # extract one word from the bytes and append to words
-        words.append(data[curWordCount:curWordCount+2])
-
-        # move  2 bytes (one word)
-        curWordCount += 2
-
-
-
 
 
 
