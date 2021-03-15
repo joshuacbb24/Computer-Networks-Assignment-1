@@ -16,7 +16,6 @@ def main():
     else:
         host = "127.0.0.1"
 
-    # host = "1.1.1.1"
     ping(host)
 
 
