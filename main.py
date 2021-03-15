@@ -22,27 +22,23 @@ def main():
 
 
 
-def switch(argument):
-    switch = {
-        0: "\tNet Unreachable",
-        1: "\tHost Unreachable",
-        2: "\tProtocol Unreachable",
-        3: "\tPort Unreachable",
-        4: "\tFragmentation Needed and Don't Fragment was Set",
-        5: "\tSource Route Failed",
-        6: "\tDestination Network Unknown",
-        7: "\tDestination Host Unknown",
-        8: "\tSource Host Isolated",
-        9: "\tCommunication with Destination Network is Administratively Prohibited",
-        10: "\tCommunication with Destination Host is Administratively Prohibited",
-        11: "\tDestination Network Unreachable for Type of Service",
-        12: "\tDestination Host Unreachable for Type of Service",
-        13: "\tCommunication Administratively Prohibited",
-        14: "\tHost Precedence Violation",
-        15: "\tPrecedence Cutoff in effect"
-    }
-    print(switch.get(argument, "\tNo Error"))
+def switch(Type, code):
 
+    # dicts for the different type's and their associated error codes
+    switch = {
+        3: {0: "\tNet Unreachable", 1: "\tHost Unreachable", 2: "\tProtocol Unreachable", 4: "\tFramgentation needed and DF set", 5: "\tSource Route Failed"},
+        11: {0: "\tTTL exceeded in transit", 1: "\tFragment reassembly time exceeded"},
+        12: {0: "\tPointer indicates the error"},
+        4: {0: "\tGateway along the path does not have buffer space needed"},
+        5: {0: "\tRedirect datagrams for the network", 1: "\tRedirect datagrams for the host", 2: "\tRedirect datagrams for the Type of service and Network", 3: "\tRedirect datagrams for the Type of Service and Host"},
+    }
+
+    codeDict = (switch.get("{}".format(Type)), "\tNo error")
+
+    if type(codeDict) is dict:
+        print(codeDict.get("{}".format(code), "\tError code not programmed"))
+    else:
+        print("\tNo Error")
 
 
 
@@ -129,13 +125,13 @@ def receiveOnePing(mySocket, ID, timeout, destAddr):
         icmpPacket = recPacket[IHL:]
 
 
-        type = icmpPacket[0:1]
-        type = int.from_bytes(type, "big")
+        Type = icmpPacket[0:1]
+        Type = int.from_bytes(Type, "big")
 
         code = icmpPacket[1:2]
         code = int.from_bytes(code, "big")
 
-        switch(code)
+        switch(Type, code)
 
         Checksum = icmpPacket[2:4]
         Checksum = int.from_bytes(Checksum, "big")
