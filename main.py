@@ -147,10 +147,7 @@ def receiveOnePing(mySocket, ID, timeout, destAddr):
 
         data = icmpPacket[8:]
 
-        bytesInDouble = struct.calcsize("d")
-        timeSent = struct.unpack("!d", recPacket[28:28 + bytesInDouble])[0]
-
-        rTrip = timeReceived - timeSent
+        rTrip = timeReceived - startedSelect
         rMin = min(rMin, rTrip)
         rMax = max(rMax, rTrip)
         rSum = rTrip + rSum
