@@ -213,7 +213,13 @@ def ping(host, timeout = 1):
     rAvg = 0.0
     # timeout=1 means: If one second goes by without a reply from the server,
     # the client assumes that either the client's ping or the server's pong is lost
-    dest = gethostbyname(host)
+
+    try:
+        dest = gethostbyname(host)
+    except gaierror:
+        print("Not a valid address or hostname")
+        sys.exit(1)
+
     print("Pinging " + dest + " using Python:")
     print("")
     # Send 10 ping requests to a server separated by approximately one second
